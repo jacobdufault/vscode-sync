@@ -1,6 +1,6 @@
 {
   "name": "vscode-sync",
-  "displayName": "vscode-sync",
+  "displayName": "sync",
   "description": "Sync settings and extensions to Google Drive",
   "version": "0.0.1",
   "publisher": "jacobdufault",
