@@ -394,6 +394,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // Some simple tests comment/uncomment functions. It'd be good to add actual
   // tests.
 
+  /*
   console.log(commentForUpload(`
   // @beginSync foobar
   one
@@ -405,6 +406,7 @@ SOL
   // something
   // @endSync
   `));
+  */
 
   /*
   console.log(uncommentForLocalSave(`
