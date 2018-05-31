@@ -32,6 +32,11 @@
         "sync.credentials": {
           "type": "string",
           "description": "Google auth credentials. Do not share this."
+        },
+        "sync.filename": {
+          "type": "string",
+          "description": "Name of the file in Google Drive that will contain the settings.",
+          "default": "vscode_sync.json"
         }
       }
     },

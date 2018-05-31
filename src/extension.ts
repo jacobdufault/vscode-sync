@@ -5,7 +5,7 @@ import * as os from 'os'
 import * as fs from 'fs'
 import * as child_process from 'child_process'
 
-const kFilename = 'vscode_simple_sync.json';
+let gFilename = '';
 let gAuthCode: string|undefined;
 let gAuthCredentials: Credentials|undefined;
 
@@ -47,13 +47,21 @@ async function getAuthCodeFromUser(): Promise<string|undefined> {
 // Checks to see if an auth token is available. Asks the user for one if there
 // is none.
 async function checkToken(): Promise<boolean> {
-  if (gAuthCode && gAuthCredentials)
+  if (gAuthCode && gAuthCredentials && gFilename)
     return true;
 
+  const kFilenamePref = 'sync.filename';
   const kCodePref = 'sync.code';
   const kCredentialsPref = 'sync.credentials';
 
   let config = vscode.workspace.getConfiguration();
+
+  gFilename = config.get<string>(kFilenamePref, '');
+  if (!gFilename) {
+    vscode.window.showErrorMessage(`${kFilenamePref} cannot be empty`);
+    return false;
+  }
+
   gAuthCode = config.get(kCodePref);
   if (!gAuthCode) {
     gAuthCode = await getAuthCodeFromUser();
@@ -83,16 +91,16 @@ async function checkToken(): Promise<boolean> {
 async function findFileInGDrive(
     drive: googleapis.drive_v3.Drive,
     warn: boolean): Promise<string|undefined> {
-  let file = await drive.files.list({q: `name = '${kFilename}'`});
+  let file = await drive.files.list({q: `name = '${gFilename}'`});
   if (!file.data.files || file.data.files.length == 0) {
     if (warn)
-      vscode.window.showInformationMessage(`Sync: Unable to find ${kFilename}`);
+      vscode.window.showInformationMessage(`Sync: Unable to find ${gFilename}`);
     return;
   }
   if (file.data.files.length > 1) {
     if (warn) {
       vscode.window.showErrorMessage(`Sync: There is more than one matching ${
-          kFilename} file. Please delete some of them.`)
+          gFilename} file. Please delete some of them.`)
     }
     return;
   }
@@ -109,7 +117,7 @@ async function uploadConfigToGDrive(config: Config) {
   let id = await findFileInGDrive(drive, /*warn*/ false);
   if (!id) {
     await drive.files.create({
-      requestBody: {name: kFilename, mimeType: 'text/plain'},
+      requestBody: {name: gFilename, mimeType: 'text/plain'},
       media: {mediaType: 'application/json', body: body}
     });
     return;
