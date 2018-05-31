@@ -12,8 +12,6 @@ complete the oauth flow so sync can access your Google Drive account.
 Sync has a few config variables that are used to cache the Google Drive
 access tokens. Do not share these!
 
-Otherwise, nothing is configurable.
-
 ## Per-platform settings
 
 Sync lets you easily customize settings per-platform. Wrap the preferences in
