@@ -9,7 +9,6 @@
     "type": "git",
     "url": "https://github.com/jacobdufault/vscode-sync"
   },
-  "preview": true,
   "engines": {
     "vscode": "^1.23.0"
   },
