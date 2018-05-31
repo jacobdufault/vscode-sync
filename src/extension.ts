@@ -1,6 +1,5 @@
 import * as googleapis from 'googleapis'
 import * as vscode from 'vscode';
-import opn = require('opn')
 import {Credentials} from 'google-auth-library/build/src/auth/credentials';
 import * as os from 'os'
 import * as fs from 'fs'
@@ -34,7 +33,12 @@ async function getAuthCodeFromUser(): Promise<string|undefined> {
     access_type: 'offline',
     scope: ['https://www.googleapis.com/auth/drive'],
   });
-  opn(url);
+
+  await vscode.window.showInputBox({
+    value: url,
+    prompt:
+        'Please open this URL in your browser, complete the flow, and paste the token in the next input box.'
+  });
 
   return await vscode.window.showInputBox(
       {prompt: 'Enter token from web browser', ignoreFocusOut: true});
