@@ -6,8 +6,7 @@ Google Drive.
 ## Getting started
 
 Sync exposes only two commands: `sync.upload` and `sync.download`. Type `<F1>
-Sync Upload` to get started. Sync will then open a web browser for you to
-complete the oauth flow so sync can access your Google Drive account.
+Sync Upload` to get started.
 
 Sync has a few config variables that are used to cache the Google Drive
 access tokens. Do not share these!
