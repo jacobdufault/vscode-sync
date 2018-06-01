@@ -187,7 +187,7 @@ function getEnv(name: string) {
 }
 
 function getConfigPath(filename: string) {
-  let home = getEnv('home');
+  let home = getEnv('HOME');
   let appData = getEnv('APPDATA');
 
   switch (os.platform()) {
