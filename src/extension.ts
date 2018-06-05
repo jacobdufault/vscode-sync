@@ -202,9 +202,9 @@ function getConfigPath(filename: string) {
 }
 
 async function runCodeBinary(args: string[]) {
-  let bin = 'code;'
+  let bin = 'code';
   if (os.platform() == 'win32')
-  bin = 'code.cmd'
+    bin = 'code.cmd'
 
   return new Promise(done => {
     let child = child_process.spawn(bin, args);
@@ -248,10 +248,14 @@ async function downloadCommand() {
     let expected = config.extensions;
     let toInstall = expected.filter(x => installed.indexOf(x) < 0);
     let toRemove = installed.filter(x => expected.indexOf(x) < 0);
-    for (let id of toInstall)
+    for (let id of toInstall) {
+      vscode.window.showInformationMessage(`Installing extension ${id}`);
       await runCodeBinary(['--install-extension', id]);
-    for (let id of toRemove)
+    }
+    for (let id of toRemove) {
+      vscode.window.showInformationMessage(`Removing extension ${id}`);
       await runCodeBinary(['--uninstall-extension', id]);
+    }
 
     vscode.window.showInformationMessage('Sync download success');
     if (toInstall.length > 0 || toRemove.length > 0) {
