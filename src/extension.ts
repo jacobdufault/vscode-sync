@@ -227,6 +227,19 @@ async function runCodeBinary(args: string[]) {
   });
 }
 
+// Shows a notification that goes away after a little while.
+function showTimedNotification(message: string) {
+  const kDurationMs = 5000;
+  vscode.window.withProgress(
+    { cancellable: false, location: vscode.ProgressLocation.Notification, title: message },
+    (progress) => {
+      progress.report({ increment: 100 });
+      return new Promise<boolean>((resolve, reject) => {
+        setTimeout(resolve.bind(true), kDurationMs);
+      });
+    });
+}
+
 async function downloadCommand() {
   try {
     function write(name: string, contentLines: string[]) {
@@ -249,15 +262,15 @@ async function downloadCommand() {
     let toInstall = expected.filter(x => installed.indexOf(x) < 0);
     let toRemove = installed.filter(x => expected.indexOf(x) < 0);
     for (let id of toInstall) {
-      vscode.window.showInformationMessage(`Installing extension ${id}`);
+      showTimedNotification(`Installing extension ${id}`);
       await runCodeBinary(['--install-extension', id]);
     }
     for (let id of toRemove) {
-      vscode.window.showInformationMessage(`Removing extension ${id}`);
+      showTimedNotification(`Removing extension ${id}`);
       await runCodeBinary(['--uninstall-extension', id]);
     }
 
-    vscode.window.showInformationMessage('Sync download success');
+    showTimedNotification('Sync download success');
     if (toInstall.length > 0 || toRemove.length > 0) {
       let msg = 'Please reload the window.';
       if (toInstall.length > 0)
@@ -289,7 +302,7 @@ async function uploadCommand() {
     config.extensions = getInstalledExtensionIds();
     await uploadConfigToGDrive(config);
 
-    vscode.window.showInformationMessage('Sync upload success');
+    showTimedNotification('Sync upload success');
   } catch (e) {
     vscode.window.showErrorMessage(`Sync upload failed: ${e}`);
   }
