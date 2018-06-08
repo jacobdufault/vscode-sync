@@ -13,26 +13,34 @@ access tokens. Do not share these!
 
 ## Per-platform settings
 
-Sync lets you easily customize settings per-platform. Wrap the preferences in
-`@beginSync` and `@endSync` tags and apply filters; currently `os:windows`,
-`os:macos`, `os:linux` are supported. `hostname:...` matches against the
-current machine's hostname.
+Sync lets you easily customize settings per-platform.
+
+First, surround the conditional preferences in `// @syncIf` and `// @end`
+lines. Then, the `syncIf` line can contain filters.
+
+Currently supported filters:
+- `os:windows`, `os:macos`, `os:linux`
+- `hostname:foo` where `foo` is the current hostname of the device
 
 If the settings are not in use for the current machine they will be commented
 out.
 
+Here are some examples.
 ```json
-// @beginSync os:windows
+// This setting is only active on Windows.
+// @syncIf os:windows
 "editor.smoothScroll": true
-// @endSync
+// @end
 
-// @beginSync hostname:myhostname
+// This setting is only active when hostname=myhostname.
+// @syncIf hostname:myhostname
 "someSetting": 3
-// @endSync
+// @end
 
-// @beginSync hostname:work os:windows
+// This setting is only active on Windows when hostname=work.
+// @syncIf os:windows hostname:work
 "someSetting": 3
-// @endSync
+// @end
 ```
 
 ## What is synced?

@@ -303,13 +303,13 @@ function commentForUpload(fileContent: string): string[] {
   let result = [];
   let inSync = false;
   for (let line of fileContent.split(/\r?\n/)) {
-    let beginSync = line.includes('@beginSync');
-    let endSync = line.includes('@endSync');
+    let syncIf = line.includes('@syncIf');
+    let end = line.includes('@end');
 
-    if (beginSync && endSync)
-      err('@beginSync and @endSync cannot be be on same line');
-    if (beginSync && inSync)
-      err('@beginSync nesting is not supported');
+    if (syncIf && end)
+      err('@syncIf and @end cannot be be on same line');
+    if (syncIf && inSync)
+      err('@syncIf nesting is not supported');
 
     if (inSync && line.trim().startsWith('//') == false) {
       let offset = line.length - line.trim().length;
@@ -317,9 +317,9 @@ function commentForUpload(fileContent: string): string[] {
       continue;
     }
 
-    if (beginSync)
+    if (syncIf)
       inSync = true;
-    if (endSync)
+    if (end)
       inSync = false;
 
     result.push(line);
@@ -341,28 +341,28 @@ function uncommentForLocalSave(fileContent: string): string {
       continue;
     }
 
-    let beginSync = line.includes('@beginSync');
-    let endSync = line.includes('@endSync');
-    if (!beginSync && !endSync && !inSync) {
+    let syncIf = line.includes('@syncIf');
+    let end = line.includes('@end');
+    if (!syncIf && !end && !inSync) {
       result.push(line);
       continue;
     }
 
-    if (beginSync && endSync)
-      err('@beginSync and @endSync cannot be be on same line');
-    if (beginSync && inSync)
-      err('@beginSync nesting is not supported');
+    if (syncIf && end)
+      err('@syncIf and @end cannot be be on same line');
+    if (syncIf && inSync)
+      err('@syncIf nesting is not supported');
 
-    if (beginSync)
+    if (syncIf)
       inSync = true;
-    if (endSync) {
+    if (end) {
       inSync = false;
       applyBlock = false;
       result.push(line);
       continue;
     }
 
-    if (!beginSync) {
+    if (!syncIf) {
       if (applyBlock) {
         result.push(line.replace('//', ''));
       } else {
@@ -407,43 +407,6 @@ function uncommentForLocalSave(fileContent: string): string {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Some simple tests comment/uncomment functions. It'd be good to add actual
-  // tests.
-
-  /*
-  console.log(commentForUpload(`
-  // @beginSync foobar
-  one
-  two
-SOL
-  // @endSync
-
-  // @beginSync
-  // something
-  // @endSync
-  `));
-  */
-
-  /*
-  console.log(uncommentForLocalSave(`
-  one
-  // @beginSync hostname:bad
-  // bad
-  // @endSync
-
-  // @beginSync hostname:DESKTOP-FS50R2V
-  // good
-  // one
-  // @endSync
-
-  // @beginSync os:windows
-  // myconfig
-  // yea!!
-     // foobar //lk
-  // @endSync
-  `));
-*/
-
   context.subscriptions.push(
       vscode.commands.registerCommand('sync.download', downloadCommand));
   context.subscriptions.push(
