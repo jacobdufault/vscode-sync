@@ -297,8 +297,8 @@ async function uploadCommand() {
 
     let config = new Config();
     config.settings = read('settings.json');
-    config.keybindings = read('keybindings.json');
-    config.locale = read('locale.json');
+    fs.exists('keybindings.json', (exists) => { if(exists) { config.keybindings = read('keybindings.json')}});
+    fs.exists('locale.json', (exists) => { if(exists) { config.keybindings = read('locale.json')}});
     config.extensions = getInstalledExtensionIds();
     await uploadConfigToGDrive(config);
 
