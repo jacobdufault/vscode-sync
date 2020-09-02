@@ -65,6 +65,6 @@
     "@types/node": "^7.0.43"
   },
   "dependencies": {
-    "googleapis": "^30.0.0"
+    "googleapis": "^39.1.0"
   }
 }
